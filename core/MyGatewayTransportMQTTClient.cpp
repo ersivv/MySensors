@@ -96,7 +96,7 @@ bool reconnectMQTT(void)
 		// Once connected, publish an announcement...
 		//_MQTT_client.publish("outTopic","hello world");
 		// ... and resubscribe
-		_MQTT_client.subscribe(MY_MQTT_SUBSCRIBE_TOPIC_PREFIX "/+/+/+/+/+");
+		_MQTT_client.subscribe((MY_MQTT_SUBSCRIBE_TOPIC_PREFIX+(String)"/+/+/+/+/+").c_str());
 		return true;
 	}
 	return false;
@@ -141,6 +141,7 @@ bool gatewayTransportInit(void)
 #if defined(MY_CONTROLLER_IP_ADDRESS)
 	_MQTT_client.setServer(_brokerIp, MY_PORT);
 #else
+	debug(PSTR("MY_CONTROLLER_URL_ADDRESS=%s\n"), MY_CONTROLLER_URL_ADDRESS);
 	_MQTT_client.setServer(MY_CONTROLLER_URL_ADDRESS, MY_PORT);
 #endif /* End of MY_CONTROLLER_IP_ADDRESS */
 
@@ -150,7 +151,9 @@ bool gatewayTransportInit(void)
 	// Turn off access point
 	WiFi.mode(WIFI_STA);
 #if defined(MY_ESP8266_HOSTNAME)
-	WiFi.hostname(MY_ESP8266_HOSTNAME);
+	if(WiFi.hostname() != MY_ESP8266_HOSTNAME) {
+		WiFi.hostname(MY_ESP8266_HOSTNAME);
+	}
 #endif /* End of MY_ESP8266_HOSTNAME */
 #if defined(MY_IP_ADDRESS)
 	WiFi.config(_MQTT_clientIp, _gatewayIp, _subnetIp);
