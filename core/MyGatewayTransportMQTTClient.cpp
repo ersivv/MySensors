@@ -105,6 +105,7 @@ bool reconnectMQTT(void)
 bool gatewayTransportConnect(void)
 {
 #if defined(MY_GATEWAY_ESP8266)
+
 	while (WiFi.status() != WL_CONNECTED) {
 		wait(500);
 		MY_SERIALDEVICE.print(F("."));
