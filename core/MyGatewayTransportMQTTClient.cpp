@@ -20,7 +20,9 @@
 
 // Topic structure: MY_MQTT_PUBLISH_TOPIC_PREFIX/NODE-ID/SENSOR-ID/CMD-TYPE/ACK-FLAG/SUB-TYPE
 
+
 #include "MyGatewayTransport.h"
+extern Device device;
 
 #if defined MY_CONTROLLER_IP_ADDRESS
 IPAddress _brokerIp(MY_CONTROLLER_IP_ADDRESS);
@@ -81,7 +83,7 @@ void incomingMQTT(char* topic, uint8_t* payload, unsigned int length)
 
 bool reconnectMQTT(void)
 {
-	debug(PSTR("Attempting MQTT connection...\n"));
+	debug(PSTR("Attempting MQTT connection to %s\n"),_MQTT_client.getServer());
 	// Attempt to connect
 	if (_MQTT_client.connect(MY_MQTT_CLIENT_ID
 #if defined(MY_MQTT_USER) && defined(MY_MQTT_PASSWORD)
@@ -110,6 +112,7 @@ bool gatewayTransportConnect(void)
 		wait(500);
 		MY_SERIALDEVICE.print(F("."));
 	}
+	MY_SERIALDEVICE.println();
 	MY_SERIALDEVICE.print(F("IP: "));
 	MY_SERIALDEVICE.println(WiFi.localIP());
 #elif defined(MY_GATEWAY_LINUX) /* Elif part of MY_GATEWAY_ESP8266 */
@@ -151,9 +154,7 @@ bool gatewayTransportInit(void)
 	// Turn off access point
 	WiFi.mode(WIFI_STA);
 #if defined(MY_ESP8266_HOSTNAME)
-	if(WiFi.hostname() != MY_ESP8266_HOSTNAME) {
-		WiFi.hostname(MY_ESP8266_HOSTNAME);
-	}
+	device.setEspHostname();
 #endif /* End of MY_ESP8266_HOSTNAME */
 #if defined(MY_IP_ADDRESS)
 	WiFi.config(_MQTT_clientIp, _gatewayIp, _subnetIp);
@@ -161,7 +162,8 @@ bool gatewayTransportInit(void)
 #ifndef MY_ESP8266_BSSID
 #define MY_ESP8266_BSSID NULL
 #endif
-	(void)WiFi.begin(MY_ESP8266_SSID, MY_ESP8266_PASSWORD, 0, MY_ESP8266_BSSID);
+	//(void)WiFi.begin(MY_ESP8266_SSID, MY_ESP8266_PASSWORD, 0, MY_ESP8266_BSSID);
+	WiFi.reconnect();
 #endif /* End of MY_GATEWAY_ESP8266 */
 
 	gatewayTransportConnect();

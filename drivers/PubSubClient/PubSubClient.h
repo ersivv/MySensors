@@ -147,6 +147,7 @@ public:
 	bool loop(); //!< loop
 	bool connected(); //!< connected
 	int state(); //!< state
+	const char* getServer();
 };
 
 

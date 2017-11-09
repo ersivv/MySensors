@@ -668,3 +668,7 @@ int PubSubClient::state()
 {
 	return this->_state;
 }
+
+const char* PubSubClient::getServer() {
+    return this->domain;
+}
