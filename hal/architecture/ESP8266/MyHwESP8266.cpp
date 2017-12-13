@@ -24,9 +24,11 @@ bool hwInit(void)
 {
 #if !defined(MY_DISABLED_SERIAL)
 	MY_SERIALDEVICE.begin(MY_BAUD_RATE, SERIAL_8N1, MY_ESP8266_SERIAL_MODE, 1);
-	MY_SERIALDEVICE.setDebugOutput(true);
+	//MY_SERIALDEVICE.setDebugOutput(true);
+	MY_SERIALDEVICE.println();
 #endif
 	EEPROM.begin(EEPROM_size);
+	device.config.Load();
 	return true;
 }
 
